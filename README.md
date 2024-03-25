@@ -40,6 +40,10 @@ You can test the Flask application using the following payload with curl:
 curl -X POST -H "Content-Type: application/json" -d '{"text": "Hello world!"}' http://127.0.0.1:5000/process_text
 ```
 
+This is the result:
+
+![embeddings](img/embeddings.png)
+
 ### Docker Setup
 
 The `Dockerfile` sets up the Docker environment for the Flask application. It installs necessary packages, sets the working directory, copies application files, installs dependencies, exposes port 5000, and specifies the command to run the Flask app.
