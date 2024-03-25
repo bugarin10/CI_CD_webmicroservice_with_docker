@@ -1,123 +1,95 @@
-### Guide to Understanding the Code for Creating a Vectordatabase 
+[![Python application test with Github Actions](https://github.com/bugarin10/CI_CD_webmicroservice_with_docker/actions/workflows/main.yml/badge.svg)](https://github.com/bugarin10/CI_CD_webmicroservice_with_docker/actions/workflows/main.yml)
 
-I'll walk you through the code step by step to explain what a vectordatabase is and how it's being created using Python and various libraries.
+Below is a README.md guide for your repository, emphasizing the CI/CD process and explaining the components of your Flask application and Docker setup:
 
-### Prerequisites:
-1. Install [Ollama](https://ollama.com/) 🦙
-2. Run Ollama in the back:
-```bash
-ollama serve
-```
-3. Virtual Environment
-```bash
-Make venv
-```
+---
 
-3. Install requirements
-```bash
-Make install
-```
+# Embedder App
 
-1. **Importing Necessary Libraries:**
-   ```python
-   import langchain
-   import pandas
-   from sentence_transformers import SentenceTransformer, util
-   from utils import *
-   from langchain.text_splitter import TokenTextSplitter
-   import chromadb
-   import ollama
-   ```
+## Overview
 
-   Here, we import libraries such as langchain, pandas, SentenceTransformer, utils, langchain.text_splitter, chromadb, and ollama. These libraries are used for text processing, embedding sentences, managing databases, and conducting language-based tasks.
+This repository contains a Flask application named "Embedder" that processes text inputs, splits them into chunks, computes embeddings for each chunk, and returns the processed data in JSON format. Additionally, it includes a Docker setup for containerization and a GitHub Actions workflow for Continuous Integration and Continuous Deployment (CI/CD).
 
-2. **Reading and Preprocessing Text Data:**
-   ```python
-   with open("resume.txt", "r") as file:
-       text_to_split = file.read()
-   text_splitter = TokenTextSplitter(encoding_name="gpt2", chunk_size=250, chunk_overlap=10)
-   texts = text_splitter.split_text(text_to_split)
-   texts = list(map(lambda x: x.replace("\n", " "), texts))
-   ```
+## Components
 
-   This section reads text data from a file ("resume.txt"), splits it into chunks using TokenTextSplitter, and preprocesses it by removing newline characters.
+### Flask Application
 
-3. **Generating Text Embeddings:**
-   ```python
-   model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-   embedding_list = model.encode(texts)
-   ```
+The main file of the Flask application is `app.py`, which defines the following functionalities:
 
-   Using SentenceTransformer, we encode the preprocessed text chunks into embeddings. These embeddings represent the semantic meaning of each text chunk.
+- Receives a POST request at the endpoint `/process_text`.
+- Processes the text input by splitting it into chunks and computing embeddings for each chunk.
+- Returns the processed data in JSON format.
 
-4. **Working with ChromaDB:**
-   ```python
-   chroma_client = chromadb.Client()
-   collection_name = "mycollection"
-   collections = chroma_client.list_collections()
-   collection_names = [collection.name for collection in collections]
-   ```
+### Payload Example
 
-   We initialize a ChromaDB client and interact with a collection named "mycollection" within the database. We also retrieve existing collection names to check if "mycollection" already exists.
-
-5. **Creating or Loading Collection in ChromaDB:**
-   ```python
-   if collection_name in collection_names:
-       collection = chroma_client.get_collection(collection_name)
-       print("Loaded existing collection:", collection_name)
-   else:
-       collection = chroma_client.create_collection(name=collection_name)
-       print("Created new collection:", collection_name)
-   ```
-
-   Depending on whether "mycollection" exists, we either load the existing collection or create a new one.
-
-6. **Adding Data to Collection:**
-   ```python
-   collection.add(
-       embeddings=embedding_list,
-       documents=texts,
-       ids=["ID" + str(i) for i in range(len(embedding_list))],
-   )
-   ```
-
-   We add the text embeddings, corresponding documents, and unique IDs to the collection in ChromaDB. This step populates the vectordatabase with our encoded text data.
-
-7. **Querying the Collection:**
-   ```python
-   question = "Tell me about Rafael Davila"
-   similar_documents = collection.query(query_texts=[question], n_results=3)
-   ```
-
-   We query the collection to find similar documents based on a given query text ("Tell me about sodemca") and retrieve the top 3 most similar documents.
-
-8. **Using Ollama for Language-Based Tasks:**
-   ```python
-   content = f"Answer the following question:{question}\
-       With this context:{context}.\
-       Do not provide answers outside this context."
-
-   response = ollama.chat(
-       model="llama2",
-       messages=[
-           {"role": "user", "content": content},
-       ],
-   )
-   print(response["message"]["content"])
-   ```
-
-   Finally, we use Ollama to engage in a conversation based on a given question within a specific context. The response contains the answer provided by the model within the defined context.
-
-   This is the output:
+You can test the Flask application using the following payload with curl:
 
 ```bash
-Rafael Davila Bugarín is a Mexican data scientist who has received the Fulbright-García Robles scholarship to pursue his second master's degree in Data Science at Duke University in North Carolina, USA. He works at the Instituto Federal de Telecomunicaciones and values the role of mathematics in his career. Rafael is also passionate about inspiring young minds through mathematics clubs for children.
-
-Rafael's technical skills include Python, PyTorch, Tensorflow, PySpark, R, SQL, Tableau, Power BI, git, emacs, docker, and AWS, among others. He has relevant experience as a research assistant at the Duke Center for Research & Engineering of AI Technology in Education, where he develops AI-based software tools to enhance teaching and learning.
-
-Rafael is also involved in various educational initiatives, including the Mathematics Club and Mathematics Olympiads, which aim to promote mathematics education in Mexico. He is part of the SODEMCA Overview, a summer course that encourages critical thinking through playful activities, strategy games, logic games, and a pre-algebra showcase.
-
-According to Rafael, learning mathematics can have numerous benefits for children, including improving their mental abilities, problem-solving skills, communication, collaboration, and creativity. He believes that by providing evidence-based support to parents and incorporating innovative educational materials, he can help nurture mathletes and contribute to the intellectual growth of Mexico.
+curl -X POST -H "Content-Type: application/json" -d '{"text": "Hello world!"}' http://127.0.0.1:5000/process_text
 ```
 
-This code essentially demonstrates the process of creating and utilizing a vectordatabase to store and retrieve text data efficiently for language-related tasks.
+### Docker Setup
+
+The `Dockerfile` sets up the Docker environment for the Flask application. It installs necessary packages, sets the working directory, copies application files, installs dependencies, exposes port 5000, and specifies the command to run the Flask app.
+
+### GitHub Actions Workflow (CI/CD)
+
+The `main.yml` file defines the GitHub Actions workflow for CI/CD. It consists of the following steps:
+
+1. Sets up the Python environment with version 3.10.
+2. Installs project dependencies.
+3. Lints the code using pylint.
+4. Formats the code using black.
+5. Builds the Docker image.
+6. Pushes the Docker image to DockerHub.
+
+## CI/CD Emphasis
+
+The CI/CD process ensures that changes to the codebase are tested, linted, and formatted automatically. It also automates the Docker image build and pushes it to DockerHub, enabling seamless deployment and version control.
+
+## Makefile
+
+The `Makefile` simplifies common development tasks with the following commands:
+
+- `venv`: Sets up a virtual environment.
+- `install`: Installs project dependencies.
+- `format`: Formats the code using black.
+- `lint`: Lints the code using pylint.
+- `docker`: Builds the Docker image.
+
+## Usage
+
+To run the Flask application locally, ensure you have Python 3.10 and the required dependencies installed. Then, follow these steps:
+
+1. Create a virtual environment:
+   ```bash
+   python -m venv venv
+   ```
+2. Activate the virtual environment:
+   - On Windows:
+     ```bash
+     venv\Scripts\activate
+     ```
+   - On macOS/Linux:
+     ```bash
+     source venv/bin/activate
+     ```
+3. Install project dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Run the Flask app:
+   ```bash
+   python app.py
+   ```
+
+For Docker usage, ensure Docker is installed on your machine and run the following commands:
+
+1. Build the Docker image:
+   ```bash
+   make docker
+   ```
+2. Run the Docker container:
+   ```bash
+   docker run -p 5000:5000 bugarin10/embedder:latest
+   ```

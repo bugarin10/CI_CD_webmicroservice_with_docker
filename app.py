@@ -3,6 +3,8 @@ from utils import text_split, embedding
 
 app = Flask(__name__)
 
+app.config["SECRET_KEY"] = "123"
+
 
 @app.route("/process_text", methods=["POST"])
 def process_text():
