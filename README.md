@@ -1,10 +1,22 @@
 [![Python application test with Github Actions](https://github.com/bugarin10/CI_CD_webmicroservice_with_docker/actions/workflows/main.yml/badge.svg)](https://github.com/bugarin10/CI_CD_webmicroservice_with_docker/actions/workflows/main.yml)
 
-Below is a README.md guide for your repository, emphasizing the CI/CD process and explaining the components of your Flask application and Docker setup:
 
----
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white)
+![FLASK](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
+![HTML](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS](https://img.shields.io/badge/CSS-239120?&style=for-the-badge&logo=css3&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
-# Embedder App
+
+### Demo video
+<div align="left">
+ 
+[![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?style=for-the-badge&logo=YouTube&logoColor=white)](https://youtu.be/o3QvoM0nwfQ)
+
+</div>
+
+# Embedder REST API with CI/CD in Docker
 
 ## Overview
 
